@@ -6,6 +6,7 @@ from dask import delayed
 from dask.diagnostics import ProgressBar
 from time import time
 import click
+import os
 
 
 def make_data(i):

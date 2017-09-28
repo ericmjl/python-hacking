@@ -7,7 +7,7 @@ import click
 
 def load(filename):
     with open(filename, 'r+') as f:
-        return json.load(f);
+        return json.load(f)
 
 
 def sum_by_letter(list_of_dicts, letter):
@@ -26,10 +26,10 @@ def mean(arr):
     return sum(arr) / len(arr)
 
 
-def main_parallel():
+def run_parallel(n):
     """Program code to run."""
     with ProgressBar():
-        filenames = [f'data/{i}.json' for i in range(10000)]
+        filenames = [f'data/{i}.json' for i in range(n)]
         data = [delayed(load)(f) for f in filenames]
         sumA = delayed(sum_by_letter)(data, 'A')
         sumB = delayed(sum_by_letter)(data, 'B')
@@ -40,10 +40,10 @@ def main_parallel():
     print(mean_score)
 
 
-def main_serial():
+def run_serial(n):
     """Program code to run."""
     data = []
-    for i in range(10000):
+    for i in range(n):
         filename = f'data/{i}.json'
         datum = load(filename)
         data.append(datum)
@@ -54,13 +54,20 @@ def main_serial():
     print(mean_score)
 
 
-if __name__ == '__main__':
+@click.command()
+@click.option('--parallel/--serial', default=True)
+@click.option('--n', default=1000)
+def main(parallel=True, n=1000):
     start = time()
-    main_serial()
-    end = time()
-    print(f'Serial time: {end - start}')
+    if parallel:
+        run_parallel(n)
+        end = time()
+        print(f'Parallel time: {end - start}')
+    else:
+        run_serial(n)
+        end = time()
+        print(f'Serial time: {end - start}')
 
-    start = time()
-    main_parallel()
-    end = time()
-    print(f'Parallel time: {end - start}')
+
+if __name__ == '__main__':
+    main()
