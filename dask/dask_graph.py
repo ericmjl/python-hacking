@@ -2,6 +2,7 @@ from dask import delayed
 from dask.diagnostics import ProgressBar
 import json
 from time import time
+import click
 
 
 def load(filename):
@@ -41,8 +42,11 @@ def main_parallel():
 
 def main_serial():
     """Program code to run."""
-    filenames = [f'data/{i}.json' for i in range(10000)]
-    data = [load(f) for f in filenames]
+    data = []
+    for i in range(10000):
+        filename = f'data/{i}.json'
+        datum = load(filename)
+        data.append(datum)
     sumA = sum_by_letter(data, 'A')
     sumB = sum_by_letter(data, 'B')
     sumC = sum_by_letter(data, 'C')
@@ -52,11 +56,11 @@ def main_serial():
 
 if __name__ == '__main__':
     start = time()
-    main_parallel()
-    end = time()
-    print(f'Parallel time: {end - start}')
-
-    start = time()
     main_serial()
     end = time()
     print(f'Serial time: {end - start}')
+
+    start = time()
+    main_parallel()
+    end = time()
+    print(f'Parallel time: {end - start}')

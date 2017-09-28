@@ -5,6 +5,8 @@ from tqdm import tqdm
 from dask import delayed
 from dask.diagnostics import ProgressBar
 from time import time
+import click
+
 
 def make_data(i):
     data = dict()
@@ -34,18 +36,20 @@ def write_xml(data, i):
     return None
 
 
-def main_serial():
-    for i in tqdm(range(10000)):
+def run_serial(n):
+    n = int(n)
+    for i in tqdm(range(n)):
         data = make_data(i)
         write_json(data, i)
         write_xml(data, i)
 
 
-def main_parallel():
+def run_parallel(n):
     # data = [delayed(make_data)(i) for i in range(10000)]
+    n = int(n)
     with ProgressBar():
         things = []
-        for i in range(10000):
+        for i in range(n):
             data = delayed(make_data)(i)
             j = delayed(write_json)(data, i)
             x = delayed(write_xml)(data, i)
@@ -55,13 +59,20 @@ def main_parallel():
         counts.compute()
 
 
-if __name__ == '__main__':
+@click.command()
+@click.option('--parallel/--serial', default=True)
+@click.option('--n', default=1000)
+def main(parallel=True, n=1000):
     start = time()
-    main_serial()
-    end = time()
-    print(f'Serial time: {end - start}')
+    if parallel:
+        run_parallel(n)
+        end = time()
+        print(f'Parallel time: {end - start}')
+    else:
+        run_serial(n)
+        end = time()
+        print(f'Serial time: {end - start}')
 
-    start = time()
-    main_parallel()
-    end = time()
-    print(f'Parallel time: {end - start}')
+
+if __name__ == '__main__':
+    main()
