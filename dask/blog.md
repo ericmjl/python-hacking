@@ -66,7 +66,7 @@ There is a logical explanation for this. `dask_graph`’s individual computation
 
 I also think the presence of only 2 cores on my 12" MacBook meant that system resources were being underutilized overall. Though I did the test while plugged into power, the computer was in a semi-warm state, so my unconfirmed guess is that there’s some measure of throttling going on. This does highlight the problems with using wall clock times to profile too.
 
-### Performance on 15 MB
+### Performance on 15" MB
 
 Dask parallel processing performed well on the 15" MacBook Pro (15" MB) on the `make_data` and `actual_task` tasks. It did not perform better on the dask_graph task, being about 10X slower, just as with the 12" MB.
 
